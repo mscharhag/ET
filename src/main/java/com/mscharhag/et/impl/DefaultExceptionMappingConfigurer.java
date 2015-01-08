@@ -21,7 +21,7 @@ public class DefaultExceptionMappingConfigurer implements ExceptionMappingConfig
     }
 
     public DefaultConfigurer using(TargetExceptionResolver resolver) {
-        return this.to(new LambdaExceptionResolver(resolver));
+        return this.to(new DelegatingExceptionResolver(resolver));
     }
 
 

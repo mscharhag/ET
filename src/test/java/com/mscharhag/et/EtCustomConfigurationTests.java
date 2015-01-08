@@ -70,6 +70,17 @@ public class EtCustomConfigurationTests {
         expect(result).toEqual(TestUtil.FOO_RUNTIME_EXCEPTION);
     }
 
+    @Test(expected = TranslationException.class)
+    public void lambdaMappingReturnsNull() {
+        ExceptionTranslator et = ET.newConfiguration()
+                .translate(FooException.class).using((ex) -> null)
+                .done();
+
+        et.withTranslation(() -> {
+            throw new FooException("foo");
+        });
+    }
+
     @Test
     public void multipleMappings() {
         ExceptionTranslator et = ET.newConfiguration()
