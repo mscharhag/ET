@@ -24,7 +24,7 @@ public class DefaultExceptionTranslator implements ExceptionTranslator {
     }
 
     public <T> T withReturningTranslation(ReturningTryBlock<T> invokable) {
-        Objects.requireNonNull(invokable, "null is not a valid argument for ET.withReturningTranslation()");
+        Objects.requireNonNull(invokable, "null is not a valid argument for ET.withReturningTranslation()"); // TODO: replace with Arguments
         try {
             return invokable.run();
         } catch (Exception e) {

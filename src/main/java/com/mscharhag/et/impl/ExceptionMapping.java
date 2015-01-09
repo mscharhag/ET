@@ -16,6 +16,7 @@ public class ExceptionMapping {
         return source;
     }
 
+    // TODO: rename
     public TargetExceptionResolver getProvider() {
         return provider;
     }

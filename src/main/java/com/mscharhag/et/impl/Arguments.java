@@ -8,4 +8,10 @@ public class Arguments {
         }
     }
 
+    public static void ensureTrue(boolean value, String message) {
+        if (!value) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
 }
