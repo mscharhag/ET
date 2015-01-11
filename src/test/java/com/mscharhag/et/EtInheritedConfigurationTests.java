@@ -22,6 +22,16 @@ public class EtInheritedConfigurationTests {
         expectException(result, FooRuntimeException.class, FOO_EXCEPTION_MESSAGE, FOO_EXCEPTION);
     }
 
+
+    @Test
+    public void baseConfigurationCanBeOverridden() {
+        ExceptionTranslator et = baseEt.configure()
+                .translate(FooException.class).to(BarRuntimeException.class)
+                .done();
+        RuntimeException result = translateException(et, FOO_EXCEPTION);
+        expectException(result, BarRuntimeException.class, FOO_EXCEPTION_MESSAGE, FOO_EXCEPTION);
+    }
+
     @Test
     public void configurationCanBeAdded() {
         ExceptionTranslator et = baseEt.configure()

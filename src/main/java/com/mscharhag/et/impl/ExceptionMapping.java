@@ -5,19 +5,22 @@ import com.mscharhag.et.TargetExceptionResolver;
 public class ExceptionMapping {
 
     private Class<? extends Exception> source;
-    private TargetExceptionResolver provider;
+    private TargetExceptionResolver exceptionResolver;
 
-    public ExceptionMapping(Class<? extends Exception> source, TargetExceptionResolver provider) {
+    public ExceptionMapping(Class<? extends Exception> source, TargetExceptionResolver resolver) {
         this.source = source;
-        this.provider = provider;
+        this.exceptionResolver = resolver;
     }
 
     public Class<? extends Exception> getSource() {
         return source;
     }
 
-    // TODO: rename
-    public TargetExceptionResolver getProvider() {
-        return provider;
+    public boolean matches(Exception e) {
+        return this.source.isAssignableFrom(e.getClass());
+    }
+
+    public TargetExceptionResolver getExceptionResolver() {
+        return exceptionResolver;
     }
 }

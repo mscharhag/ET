@@ -5,14 +5,15 @@ import com.mscharhag.et.TargetExceptionResolver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DefaultExceptionMappingConfigurer implements ExceptionMappingConfigurer {
 
-    private DefaultConfigurer configurer;
+    private ExceptionMappings mappings;
     private List<Class<? extends Exception>> ex;
 
-    public DefaultExceptionMappingConfigurer(DefaultConfigurer configurer, List<Class<? extends Exception>> ex) {
-        this.configurer = configurer;
+    public DefaultExceptionMappingConfigurer(ExceptionMappings mappings, List<Class<? extends Exception>> ex) {
+        this.mappings = mappings;
         this.ex = ex;
     }
 
@@ -26,13 +27,11 @@ public class DefaultExceptionMappingConfigurer implements ExceptionMappingConfig
 
 
     private DefaultConfigurer to(TargetExceptionResolver targetExceptionResolver) {
-        List<ExceptionMapping> t = new ArrayList<>(configurer.targets);
+        List<ExceptionMapping> t = this.ex.stream()
+                .map(aClass -> new ExceptionMapping(aClass, targetExceptionResolver))
+                .collect(Collectors.toList());
 
-        for (Class<? extends Exception> aClass : this.ex) {
-            t.add(new ExceptionMapping(aClass, targetExceptionResolver));
-        }
-
-        return new DefaultConfigurer(t);
+        return new DefaultConfigurer(this.mappings.withMappings(t));
     }
 
 }

@@ -8,34 +8,39 @@ import java.util.List;
 
 public class DefaultConfigurer extends ExceptionTranslatorConfigurer {
 
-    List<ExceptionMapping> targets; // TODO: fix scope
-
+    protected ExceptionMappings mappings;
 
     public DefaultConfigurer() {
         this(null);
     }
 
-    DefaultConfigurer(List<ExceptionMapping> targets) {
-        this.targets = Collections.unmodifiableList(targets != null ? targets : new ArrayList<>());
+    DefaultConfigurer(ExceptionMappings mappings) {
+        this.mappings = mappings;
+        if (mappings == null) {
+            this.mappings = this.createDefaultExceptionMappings();
+        }
     }
 
-//    @SafeVarargs
-//    public final DefaultExceptionMappingConfigurer translate(Class<? extends Exception>... sources) {
-//        List<Class<? extends Exception>> ex = new ArrayList<>();
-//        for (Class<? extends Exception> exception : sources) {
-//            ex.add(exception);
-//        }
-//
-//    }
+    private ExceptionMappings createDefaultExceptionMappings() {
+        List<ExceptionMapping> list = new ArrayList<>();
+        list.add(new ExceptionMapping(Exception.class, (ex) -> {
+            if (ex instanceof RuntimeException) {
+                return (RuntimeException) ex;
+            }
+            return new RuntimeException(ex.getMessage(), ex);
+        }));
 
-    @Override
+        ExceptionMappings parent = new ExceptionMappings(list);
+        return new ExceptionMappings(parent);
+    }
+
+    @Override // TODO rename?
     protected ExceptionMappingConfigurer getExceptionMappingConfigurer(List<Class<? extends Exception>> sources) {
-        return new DefaultExceptionMappingConfigurer(this, sources);
+        return new DefaultExceptionMappingConfigurer(this.mappings, sources);
     }
-
 
     public ExceptionTranslator done() {
-        return new DefaultExceptionTranslator(targets);
+        return new DefaultExceptionTranslator(mappings);
     }
 
 

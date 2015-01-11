@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * If the delegate returns {code null} a {@link com.mscharhag.et.TranslationException} will be thrown.
  */
-public class DelegatingExceptionResolver implements TargetExceptionResolver {
+public class DelegatingExceptionResolver implements TargetExceptionResolver { // TODO: remove?
 
     private TargetExceptionResolver delegate;
 

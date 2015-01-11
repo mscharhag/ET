@@ -72,14 +72,14 @@ public class EtDefaultConfigurationTests {
     @Test
     public void withTranslationFailsIfNullIsPassed() {
         RuntimeException result = TestUtil.catchException(() -> et.withTranslation(null));
-        expect(result.getClass()).toEqual(NullPointerException.class);
+        expect(result.getClass()).toEqual(IllegalArgumentException.class);
         expect(result.getMessage()).toEqual("null is not a valid argument for ET.withTranslation()");
     }
 
     @Test
     public void withReturningTranslationFailsIfNullIsPassed() {
         RuntimeException result = TestUtil.catchException(() -> et.withReturningTranslation(null));
-        expect(result.getClass()).toEqual(NullPointerException.class);
+        expect(result.getClass()).toEqual(IllegalArgumentException.class);
         expect(result.getMessage()).toEqual("null is not a valid argument for ET.withReturningTranslation()");
     }
 
