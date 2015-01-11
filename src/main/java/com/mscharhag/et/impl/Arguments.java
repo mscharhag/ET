@@ -1,5 +1,8 @@
 package com.mscharhag.et.impl;
 
+/**
+ * Simple utility class for for argument validation.
+ */
 public class Arguments {
 
     public static void ensureNotNull(Object obj, String message) {

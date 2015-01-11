@@ -7,7 +7,7 @@ import com.mscharhag.et.test.exceptions.FooRuntimeException;
 import static com.mscharhag.et.test.TestUtil.*;
 import org.junit.Test;
 
-public class EtInheritedConfigurationTests {
+public class InheritedConfigurationTests {
 
     private ExceptionTranslator baseEt = ET.newConfiguration()
             .translate(FooException.class).to(FooRuntimeException.class)
@@ -15,7 +15,7 @@ public class EtInheritedConfigurationTests {
 
     @Test
     public void baseConfigurationIsInherited() {
-        ExceptionTranslator et = baseEt.configure()
+        ExceptionTranslator et = baseEt.newConfiguration()
                 .translate(BarException.class).to(BarRuntimeException.class)
                 .done();
         RuntimeException result = translateException(et, FOO_EXCEPTION);
@@ -25,7 +25,7 @@ public class EtInheritedConfigurationTests {
 
     @Test
     public void baseConfigurationCanBeOverridden() {
-        ExceptionTranslator et = baseEt.configure()
+        ExceptionTranslator et = baseEt.newConfiguration()
                 .translate(FooException.class).to(BarRuntimeException.class)
                 .done();
         RuntimeException result = translateException(et, FOO_EXCEPTION);
@@ -34,7 +34,7 @@ public class EtInheritedConfigurationTests {
 
     @Test
     public void configurationCanBeAdded() {
-        ExceptionTranslator et = baseEt.configure()
+        ExceptionTranslator et = baseEt.newConfiguration()
                 .translate(BarException.class).to(BarRuntimeException.class)
                 .done();
         RuntimeException result = translateException(et, BAR_EXCEPTION);

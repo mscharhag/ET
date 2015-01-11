@@ -3,35 +3,32 @@ package com.mscharhag.et.impl;
 import com.mscharhag.et.ExceptionMappingConfigurer;
 import com.mscharhag.et.TargetExceptionResolver;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class DefaultExceptionMappingConfigurer implements ExceptionMappingConfigurer {
 
-    private ExceptionMappings mappings;
-    private List<Class<? extends Exception>> ex;
+    private final ExceptionMappings exceptionMappings;
+    private final List<Class<? extends Exception>> sourceExceptionClasses;
 
-    public DefaultExceptionMappingConfigurer(ExceptionMappings mappings, List<Class<? extends Exception>> ex) {
-        this.mappings = mappings;
-        this.ex = ex;
+    public DefaultExceptionMappingConfigurer(ExceptionMappings exceptionMappings, List<Class<? extends Exception>> sourceExceptionClasses) {
+        this.exceptionMappings = exceptionMappings;
+        this.sourceExceptionClasses = sourceExceptionClasses;
     }
 
-    public DefaultConfigurer to(Class<? extends RuntimeException> targetException) {
+    public DefaultExceptionTranslatorConfigurer to(Class<? extends RuntimeException> targetException) {
         return this.to(new ReflectiveExceptionResolver(targetException));
     }
 
-    public DefaultConfigurer using(TargetExceptionResolver resolver) {
-        return this.to(new DelegatingExceptionResolver(resolver));
+    public DefaultExceptionTranslatorConfigurer using(TargetExceptionResolver resolver) {
+        return this.to(resolver);
     }
 
-
-    private DefaultConfigurer to(TargetExceptionResolver targetExceptionResolver) {
-        List<ExceptionMapping> t = this.ex.stream()
+    private DefaultExceptionTranslatorConfigurer to(TargetExceptionResolver targetExceptionResolver) {
+        List<ExceptionMapping> t = this.sourceExceptionClasses.stream()
                 .map(aClass -> new ExceptionMapping(aClass, targetExceptionResolver))
                 .collect(Collectors.toList());
 
-        return new DefaultConfigurer(this.mappings.withMappings(t));
+        return new DefaultExceptionTranslatorConfigurer(this.exceptionMappings.withMappings(t));
     }
-
 }

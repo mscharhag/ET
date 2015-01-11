@@ -6,21 +6,20 @@ import com.mscharhag.et.TranslationException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExceptionMappings {
+class ExceptionMappings {
 
     protected ExceptionMappings parentMappings;
     protected List<ExceptionMapping> exceptionMappings;
 
-
-    public ExceptionMappings(ExceptionMappings parentMappings) {
+    ExceptionMappings(ExceptionMappings parentMappings) {
         this(parentMappings, null);
     }
 
-    public ExceptionMappings(List<ExceptionMapping> mappings) {
+    ExceptionMappings(List<ExceptionMapping> mappings) {
         this(null, mappings);
     }
 
-    public ExceptionMappings(ExceptionMappings parentMappings, List<ExceptionMapping> mappings) {
+    ExceptionMappings(ExceptionMappings parentMappings, List<ExceptionMapping> mappings) {
         this.parentMappings = parentMappings;
         this.exceptionMappings = mappings;
 
@@ -29,8 +28,7 @@ public class ExceptionMappings {
         }
     }
 
-
-    public TargetExceptionResolver getExceptionResolver(Exception e) {
+    TargetExceptionResolver getExceptionResolver(Exception e) {
         for (ExceptionMapping exceptionMapping : this.exceptionMappings) {
             if (exceptionMapping.matches(e)) {
                 return exceptionMapping.getExceptionResolver();
@@ -39,11 +37,10 @@ public class ExceptionMappings {
         if (parentMappings != null) {
             return parentMappings.getExceptionResolver(e);
         }
-        throw new TranslationException(""); // TODO
+        throw new TranslationException("No resolver for exception found, exception: " + e.getClass().getCanonicalName());
     }
 
-
-    public ExceptionMappings withMappings(List<ExceptionMapping> mappings) {
+    ExceptionMappings withMappings(List<ExceptionMapping> mappings) {
         List<ExceptionMapping> totalMappings = new ArrayList<>(this.exceptionMappings);
         totalMappings.addAll(mappings);
         return new ExceptionMappings(this.parentMappings, totalMappings);

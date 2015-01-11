@@ -6,6 +6,6 @@ public interface ExceptionTranslator {
 
     <T> T withReturningTranslation(ReturningTryBlock<T> invokable);
 
-    ExceptionTranslatorConfigurer configure();
+    ExceptionTranslatorConfigurer newConfiguration();
 
 }

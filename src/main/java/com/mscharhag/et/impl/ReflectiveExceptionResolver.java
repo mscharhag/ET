@@ -10,11 +10,11 @@ import java.util.*;
 /**
  * Returns {@link java.lang.RuntimeException} instances based on a passed {@link java.lang.Class}.
  */
-public class ReflectiveExceptionResolver implements TargetExceptionResolver {
+class ReflectiveExceptionResolver implements TargetExceptionResolver {
 
     private Class<? extends RuntimeException> targetExceptionClass;
 
-    public ReflectiveExceptionResolver(Class<? extends RuntimeException> targetExceptionClass) {
+    ReflectiveExceptionResolver(Class<? extends RuntimeException> targetExceptionClass) {
         Arguments.ensureNotNull(targetExceptionClass, "targetExceptionClass cannot be null");
         this.targetExceptionClass = targetExceptionClass;
     }
@@ -40,8 +40,7 @@ public class ReflectiveExceptionResolver implements TargetExceptionResolver {
                 + this.targetExceptionClass.getCanonicalName(), sourceException);
     }
 
-
-    private List<ConstructorArgumentMapping> getConstructorMappings(Exception source) {
+    protected List<ConstructorArgumentMapping> getConstructorMappings(Exception source) {
         List<ConstructorArgumentMapping> mappings = new ArrayList<>();
 
         mappings.add(new ConstructorArgumentMapping(String.class, Throwable.class).arguments(source.getMessage(), source)); // (String, Throwable)
@@ -73,7 +72,6 @@ public class ReflectiveExceptionResolver implements TargetExceptionResolver {
         ConstructorArgumentMapping(Class<?>... types) {
             this.types = types;
         }
-
 
         public ConstructorArgumentMapping arguments(Object... arguments) {
             Arguments.ensureTrue(this.types.length == arguments.length, "length of arguments has to be " + this.types.length);

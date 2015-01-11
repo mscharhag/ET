@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static com.mscharhag.oleaster.matcher.Matchers.*;
 
-public class EtCustomConfigurationTests {
+public class CustomConfigurationTests {
 
     @Test
     public void customExceptionMappingIsUsed() {

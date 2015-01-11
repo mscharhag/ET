@@ -3,26 +3,27 @@ package com.mscharhag.et.impl;
 import com.mscharhag.et.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class DefaultConfigurer extends ExceptionTranslatorConfigurer {
+public class DefaultExceptionTranslatorConfigurer extends ExceptionTranslatorConfigurer {
 
     protected ExceptionMappings mappings;
 
-    public DefaultConfigurer() {
+    public DefaultExceptionTranslatorConfigurer() {
         this(null);
     }
 
-    DefaultConfigurer(ExceptionMappings mappings) {
+    DefaultExceptionTranslatorConfigurer(ExceptionMappings mappings) {
         this.mappings = mappings;
         if (mappings == null) {
             this.mappings = this.createDefaultExceptionMappings();
         }
     }
 
-    private ExceptionMappings createDefaultExceptionMappings() {
+    protected ExceptionMappings createDefaultExceptionMappings() {
         List<ExceptionMapping> list = new ArrayList<>();
+
+        // add mapping to translate checked exception to runtime exceptions
         list.add(new ExceptionMapping(Exception.class, (ex) -> {
             if (ex instanceof RuntimeException) {
                 return (RuntimeException) ex;
@@ -34,14 +35,14 @@ public class DefaultConfigurer extends ExceptionTranslatorConfigurer {
         return new ExceptionMappings(parent);
     }
 
-    @Override // TODO rename?
-    protected ExceptionMappingConfigurer getExceptionMappingConfigurer(List<Class<? extends Exception>> sources) {
+    @Override
+    protected ExceptionMappingConfigurer translate(List<Class<? extends Exception>> sources) {
         return new DefaultExceptionMappingConfigurer(this.mappings, sources);
     }
 
+    @Override
     public ExceptionTranslator done() {
         return new DefaultExceptionTranslator(mappings);
     }
-
 
 }

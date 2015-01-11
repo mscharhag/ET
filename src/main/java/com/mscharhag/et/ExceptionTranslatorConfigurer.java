@@ -11,10 +11,10 @@ public abstract class ExceptionTranslatorConfigurer {
         for (Class<? extends Exception> source : sources) {
             sourceList.add(source);
         }
-        return this.getExceptionMappingConfigurer(sourceList);
+        return this.translate(sourceList);
     }
 
-    protected abstract ExceptionMappingConfigurer getExceptionMappingConfigurer(List<Class<? extends Exception>> sources);
+    protected abstract ExceptionMappingConfigurer translate(List<Class<? extends Exception>> sources);
 
     public abstract ExceptionTranslator done();
 

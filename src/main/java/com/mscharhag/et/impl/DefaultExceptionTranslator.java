@@ -2,18 +2,12 @@ package com.mscharhag.et.impl;
 
 import com.mscharhag.et.*;
 
-import java.util.*;
-
 class DefaultExceptionTranslator implements ExceptionTranslator {
 
     protected ExceptionMappings exceptionMappings;
 
-//    protected Map<Class<? extends Exception>, TargetExceptionResolver> exceptionMappings;
-
     DefaultExceptionTranslator(ExceptionMappings exceptionMappings) {
         this.exceptionMappings = exceptionMappings;
-//        this.exceptionMappings = Collections.unmodifiableList(new ArrayList<>(mapping));
-//        exceptionMappings = new LinkedHashMap<>(mapping);
     }
 
     @Override
@@ -36,13 +30,17 @@ class DefaultExceptionTranslator implements ExceptionTranslator {
     }
 
     @Override
-    public ExceptionTranslatorConfigurer configure() {
-        return new DefaultConfigurer(new ExceptionMappings(this.exceptionMappings));
+    public ExceptionTranslatorConfigurer newConfiguration() {
+        return new DefaultExceptionTranslatorConfigurer(new ExceptionMappings(this.exceptionMappings));
     }
 
-
-    protected RuntimeException getTargetException(Exception e) {
-        TargetExceptionResolver resolver = this.exceptionMappings.getExceptionResolver(e);
-        return resolver.getTargetException(e);
+    protected RuntimeException getTargetException(Exception source) {
+        TargetExceptionResolver resolver = this.exceptionMappings.getExceptionResolver(source);
+        RuntimeException targetException = resolver.getTargetException(source);
+        if (targetException == null) {
+            throw new TranslationException("TargetExceptionResolver returned null as target exception, " +
+                    "targetExceptionResolver: " + resolver.getClass().getCanonicalName());
+        }
+        return this.exceptionMappings.getExceptionResolver(source).getTargetException(source);
     }
 }
