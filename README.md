@@ -16,7 +16,7 @@ try {
 }
 ```
 In addition to that, many Java developers prefer to work with `RuntimeExceptions` only
-(there are [http://stackoverflow.com/questions/613954/the-case-against-checked-exceptions/614330#614330](solid reasons) for that).
+(there are [solid reasons](http://stackoverflow.com/questions/613954/the-case-against-checked-exceptions/614330#614330) for that).
 When doing this, you often end up catching checked exceptions from standard or third party components to convert them to into `RuntimeExceptions`.
 
 ET is a (very) small Java 8 library that simplifies your exception conversion code:
