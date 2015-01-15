@@ -1,37 +1,43 @@
 ET
 ==
+ET is a small Java 8+ library for exception conversion/translation.
 
-### Introduction
+### Motivation
 
-TODO:
-
-* Motivation
-
-A small Java utility library for exception translation
-
-With Java:
+From time to time every Java developer needs to convert exceptions of type `X` to exceptions of type `Y`.
+This type of code typically looks like that:
 ```java
 try {
     // code that can throw SomeException
     throw new SomeException();
 } catch (SomeException e) {
-    throw new SomeRuntimeException(e);
+    // convert SomeException to the type you need
+    throw new MyRuntimeException(e);
 }
 ```
+In addition to that, many Java developers prefer to work with `RuntimeExceptions` only
+(there are [http://stackoverflow.com/questions/613954/the-case-against-checked-exceptions/614330#614330](solid reasons) for that).
+When doing this, you often end up catching checked exceptions from standard or third party components to convert them to into `RuntimeExceptions`.
 
-With ET:
+ET is a (very) small Java 8 library that simplifies your exception conversion code:
 ```Java
-// configure your mappings once, ExceptionTranslator is thread safe and immutable
+// Configure your exception mappings once in your application/module
 ExceptionTranslator et = ET.newConfiguration()
-        .translate(SomeException.class).to(SomeRuntimeException.class)
+        .translate(SomeException.class).to(MyRuntimeException.class)
         .done();
 
-// use configured mappings, this will throw SomeRuntimeException
+// Wrap the code that can throw SomeException in a Java 8 Lambda
+// expression, no try/catch block required
 et.withTranslation(() -> {
     // code that can throw SomeException
     throw new SomeException();
 });
 ```
+Here `et.withTranslation(() -> ...)` will execute the passed lambda expression. If the Lambda expression throws `SomeException`,
+ `ExceptionTranslator` will catch it and throw a `MyRuntimeException` instead. The `cause` of `MyRuntimeException` will be the
+ caught `SomeException`.
+
+Note that `ExceptionTranslator` is immutable and thread safe, so it is safe to make `ExceptionTranslators` globally available.
 
 ### Setup
 
@@ -45,8 +51,7 @@ TODO:
 ### Getting started
 
 Exceptions are translated using an `ExceptionTranslator`. An `ExceptionTranslator` can be obtained
- from a exception mapping configuration. With `ET.newConfiguration()` new mapping configurations can be
- created.
+ from an exception mapping configuration. New mapping configurations can be created with `ET.newConfiguration()`:
 
 ```java
 ExceptionTranslator et = ET.newConfiguration()
