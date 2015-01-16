@@ -97,6 +97,22 @@ Person p = et.withReturningTranslation(() -> {
 Please note that `ExceptionTranslator` is thread safe and immutable. It is safe to configure it once and make it globally
  available.
 
+
+
+
+
+If no exception mappings are configured, ExceptionTranslator will translate all checked exceptions to `RuntimeExceptions`:
+```java
+ExceptionTranslator et = ET.newConfiguration().done();
+// will throw RuntimeException
+et.withTranslation(() -> {
+    throw new IOException("error");
+});
+```
+
+
+### Configuration inheritance
+
 You can create new `ExceptionTranslator` instances based on the configuration of an existing `ExceptionTranslator`:
 
 ```java
@@ -139,19 +155,27 @@ et.withTranslation(() -> {
 });
 ```
 
-If no exception mappings are configured, ExceptionTranslator will translate all checked exceptions to `RuntimeExceptions`:
-```java
-ExceptionTranslator et = ET.newConfiguration().done();
-// will throw RuntimeException
-et.withTranslation(() -> {
-    throw new IOException("error");
-});
-```
+### Exception constructors
 
-TODO:
+Whenever an exception should be converted to another exception, ET uses reflection to instantiate the
+target exception. In order to do this, at least one of the following public constructors is required
+in the target exception class. This list will be checked in the shown order. The first matching
+constructor will be used to create the target exception:
 
-* Exception constructors
-* message/cause
+* `(String, Throwable)`, exception message and cause will be passed
+* `(String, Exception)`, exception massage and cause will be passed
+* `(String, RuntimeException)`, exception message and cause will be passed. Is only used if the source
+    exception is a sub class of `RuntimeException`
+* `(Throwable)`, exception cause will be passed
+* `(Exception)`, exception cause will be passed
+* `(RuntimeException)`, exception cause will be passed. Is only used if the source exception is sub
+    class of `RuntimeException`
+* `(String)`, exception message will be passed
+* `()`, default constructor, no arguments will be passed
+
+If no matching constructor can be found a `TranslationException` will be thrown. Cause of this
+`TranslationException` will be the source exception.
+
 
 ### Licence
 
