@@ -121,6 +121,7 @@ Alternatively you can use `ExceptionTranslator.withReturningTranslation()` if yo
 want to return a value from the Lambda expression.
 
 For example:
+```java
 String result = et.withReturningTranslation(() -> {
     Method method = String.class.getMethod("toLowerCase");
     return (String) method.invoke("FOO");
@@ -175,8 +176,9 @@ et.withTranslation(() -> {
 ```
 
 Note that `ExceptionTranslator` checks its own mapping configuration before using
-the inherited configuration. So you can define more specific sub mappings when needed:
+the inherited configuration. So you can define more specific sub mappings when needed.
 
+For example:
 ```java
 ExceptionTranslator base = ET.newConfiguration()
         .translate(IOException.class).to(MyRuntimeException.class)
