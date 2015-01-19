@@ -43,7 +43,8 @@ expression throws `SomeException`, `ExceptionTranslator` will catch it and throw
 `MyRuntimeException` instead. The `cause` of `MyRuntimeException` will be the caught
 instance of `SomeException`.
 
-Note that `ExceptionTranslator` is immutable and thread safe, so it is safe to make `ExceptionTranslators` globally available.
+`ExceptionTranslator` is immutable and thread safe, so it is safe to make `ExceptionTranslators`
+globally available.
 
 ### Setup
 
@@ -92,10 +93,11 @@ ExceptionTranslator et = ET.newConfiguration()
         // an IOException which will be converted to SomeRuntimeException.
         // This mapping should be defined first
         .translate(UnknownHostException.class).to(HostNotFoundException.class)
+        .done()
 ```
 
 To translate exceptions using the configured mappings simply use `ExceptionTranslator.withTranslation()`
-and pass a lambda expression.
+and pass a Java 8 Lambda expression.
 
 For example:
 ```java
@@ -114,7 +116,7 @@ et.withTranslation(() -> {
     String result = (String) method.invoke("FOO");
     System.out.println(result); // prints "foo"
 });
-
+```
 Alternatively you can use `ExceptionTranslator.withReturningTranslation()` if you
 want to return a value from the Lambda expression.
 
