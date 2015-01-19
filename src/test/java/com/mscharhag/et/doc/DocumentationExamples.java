@@ -6,10 +6,17 @@ import com.mscharhag.et.test.TestUtil;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URLConnection;
+
 public class DocumentationExamples {
 
     @Test
-    public void basicSetup() {
+    public void motivation() {
         RuntimeException ex = TestUtil.catchException(() -> {
             /*
                 Instead of:
@@ -38,6 +45,39 @@ public class DocumentationExamples {
     }
 
 
+    @Test
+    public void gettingStartedWithTranslation()  {
+        ExceptionTranslator et = ET.newConfiguration()
+                .translate(ReflectiveOperationException.class).to(SomeRuntimeException.class)
+                .done();
+
+        et.withTranslation(() -> {
+
+            // this piece of code can throw NoSuchMethodException,
+            // InvocationTargetException and IllegalAccessException
+
+            // call String.toLowerCase() using reflection
+            Method method = String.class.getMethod("toLowerCase");
+            String result = (String) method.invoke("FOO");
+            System.out.println(result);
+        });
+
+    }
+
+    @Test
+    public void gettingStartedWithReturningTranslation()  {
+        ExceptionTranslator et = ET.newConfiguration()
+                .translate(ReflectiveOperationException.class).to(SomeRuntimeException.class)
+                .done();
+
+        String result = et.withReturningTranslation(() -> {
+            Method method = String.class.getMethod("toLowerCase");
+            return (String) method.invoke("FOO");
+        });
+        System.out.println(result);
+
+        assertEquals("foo", result);
+    }
 
 
 

@@ -4,24 +4,29 @@ ET is a small Java 8+ library for exception conversion/translation.
 
 ### Motivation
 
-From time to time every Java developer needs to convert exceptions of type `X` to exceptions of type `Y`.
-This type of code typically looks like that:
+From time to time every Java developer needs to convert exceptions of type `X` to type `Y`.
+
+This sort of code typically looks like that:
 ```java
 try {
     // code that can throw SomeException
     throw new SomeException();
 } catch (SomeException e) {
-    // convert SomeException to the type you need
+    // convert SomeException to the exception you need
     throw new MyRuntimeException(e);
 }
 ```
-In addition to that, many Java developers prefer to work with `RuntimeExceptions` only
+In addition to that, many Java developers prefer to work only with `RuntimeExceptions`
 (there are [solid reasons](http://stackoverflow.com/questions/613954/the-case-against-checked-exceptions/614330#614330) for that).
-When doing this, you often end up catching checked exceptions from standard or third party components to convert them to into `RuntimeExceptions`.
+When doing this, you often end up catching checked exceptions from standard or third party
+components in order to convert them to into `RuntimeExceptions`.
 
-ET is a (very) small Java 8 library that simplifies your exception conversion code:
+ET is a (very) small Java 8 library that simplifies your exception conversion code using
+Lambda expressions.
+
+With ET it looks like this:
 ```Java
-// Configure your exception mappings once in your application/module
+// Configure your exception mappings once in your application/module/class
 ExceptionTranslator et = ET.newConfiguration()
         .translate(SomeException.class).to(MyRuntimeException.class)
         .done();
@@ -33,9 +38,10 @@ et.withTranslation(() -> {
     throw new SomeException();
 });
 ```
-Here `et.withTranslation(() -> ...)` will execute the passed lambda expression. If the Lambda expression throws `SomeException`,
- `ExceptionTranslator` will catch it and throw a `MyRuntimeException` instead. The `cause` of `MyRuntimeException` will be the
- caught `SomeException`.
+Here `et.withTranslation(() -> ...)` will execute the passed lambda expression. If the Lambda
+expression throws `SomeException`, `ExceptionTranslator` will catch it and throw a
+`MyRuntimeException` instead. The `cause` of `MyRuntimeException` will be the caught
+instance of `SomeException`.
 
 Note that `ExceptionTranslator` is immutable and thread safe, so it is safe to make `ExceptionTranslators` globally available.
 
@@ -50,9 +56,10 @@ TODO:
 
 ### Getting started
 
-Exceptions are translated using an `ExceptionTranslator`. An `ExceptionTranslator` can be obtained
- from an exception mapping configuration. New mapping configurations can be created with `ET.newConfiguration()`:
+Exceptions are translated using an `ExceptionTranslator`, which is created from an
+exception mapping configuration. New configurations are created with `ET.newConfiguration()`
 
+For example:
 ```java
 ExceptionTranslator et = ET.newConfiguration()
 
@@ -67,45 +74,71 @@ ExceptionTranslator et = ET.newConfiguration()
         //              will be translated to SomeRuntimeException
         .translate(IOException.class).to(SomeRuntimeException.class)
 
-        // The following statement will not work, because UnknownHostException is an
-        // IOException which is already translated to SomeRuntimeException (previous statement)
-        // To make this work, this mapping should be defined before the IOException mapping
-        // More specific mappings should be defined first! (like the order of catch statements)
-        .translate(UnknownHostException.class).to(HostNotFoundException.class)
-
         // create an ExceptionTranslator from this configuration
         .done();
 ```
 
-To translate exceptions using the configured mappings simply use `ExceptionTranslator.withTranslation()` and pass a lambda expression:
+Note that the order of the mapping configuration is important (like the order of catch statements).
+Most specific mappings should be defined first.
+
+For example:
 ```java
-// The above configuration defines a mapping from SomeException to SomeRuntimeException
-// withTranslation() will throw SomeRuntimeException in case the lambda expression throws SomeException
+ExceptionTranslator et = ET.newConfiguration()
+
+        // convert all IOExceptions to SomeRuntimeExceptions
+        .translate(IOException.class).to(SomeRuntimeException.class)
+
+        // The following mapping will have no effect! UnknownHostException is
+        // an IOException which will be converted to SomeRuntimeException.
+        // This mapping should be defined first
+        .translate(UnknownHostException.class).to(HostNotFoundException.class)
+```
+
+To translate exceptions using the configured mappings simply use `ExceptionTranslator.withTranslation()`
+and pass a lambda expression.
+
+For example:
+```java
+ExceptionTranslator et = ET.newConfiguration()
+        // convert all reflection exceptions to SomeRuntimeException
+        .translate(ReflectiveOperationException.class).to(SomeRuntimeException.class)
+        .done();
+
 et.withTranslation(() -> {
-    // code that can throw SomeException
+
+    // this piece of code can throw NoSuchMethodException,
+    // InvocationTargetException and IllegalAccessException
+
+    // call String.toLowerCase() using reflection
+    Method method = String.class.getMethod("toLowerCase");
+    String result = (String) method.invoke("FOO");
+    System.out.println(result); // prints "foo"
 });
+
+Alternatively you can use `ExceptionTranslator.withReturningTranslation()` if you
+want to return a value from the Lambda expression.
+
+For example:
+String result = et.withReturningTranslation(() -> {
+    Method method = String.class.getMethod("toLowerCase");
+    return (String) method.invoke("FOO");
+});
+
+System.out.println(result); // "foo"
 ```
 
-If you want to return a value from the lambda expression, use `ExceptionTranslator.withReturningTranslation()` instead:
-```java
-Person p = et.withReturningTranslation(() -> {
-    // code that can throw SomeException
-    return new Person("john");
-});
-```
+Please note that `ExceptionTranslator` is thread safe and immutable. It is safe to
+configure it once and make it globally available.
 
-Please note that `ExceptionTranslator` is thread safe and immutable. It is safe to configure it once and make it globally
- available.
+If no exception mappings are configured, `ExceptionTranslator` will translate all
+checked exceptions to `RuntimeExceptions`.
 
-
-
-
-
-If no exception mappings are configured, ExceptionTranslator will translate all checked exceptions to `RuntimeExceptions`:
+For example:
 ```java
 ExceptionTranslator et = ET.newConfiguration().done();
-// will throw RuntimeException
+
 et.withTranslation(() -> {
+    // this exception will be converted to RuntimeException
     throw new IOException("error");
 });
 ```
@@ -113,8 +146,10 @@ et.withTranslation(() -> {
 
 ### Configuration inheritance
 
-You can create new `ExceptionTranslator` instances based on the configuration of an existing `ExceptionTranslator`:
+You can create new `ExceptionTranslator` instances based on the configuration of an
+existing `ExceptionTranslator`.
 
+For example:
 ```java
 ExceptionTranslator base = ET.newConfiguration()
         .translate(FooException.class).to(BaseRuntimeException.class)
@@ -137,8 +172,8 @@ et.withTranslation(() -> {
 });
 ```
 
-Note that ExceptionTranslator checks its own mapping configuration before using the inherited configuration.
-So you can define more specific sub mappings when needed:
+Note that `ExceptionTranslator` checks its own mapping configuration before using
+the inherited configuration. So you can define more specific sub mappings when needed:
 
 ```java
 ExceptionTranslator base = ET.newConfiguration()
