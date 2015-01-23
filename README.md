@@ -48,12 +48,30 @@ globally available.
 
 ### Setup
 
-TODO:
+To use ET you only need to add the following maven dependency to your project:
 
-* Small
-* Java 8
-* Maven dependency
-* Gradle dependency
+```xml
+<dependency>
+    <groupId>com.mscharhag</groupId>
+    <artifactId>et</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+When using ET you typically use Java 8 Lambda expression. So make to set your compiler level
+to Java 8 or higher. With Maven you can do this with the `maven-compiler-plugin`:
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.1</version>
+    <configuration>
+        <source>1.8</source>
+        <target>1.8</target>
+    </configuration>
+</plugin>
+```
 
 ### Getting started
 
