@@ -16,17 +16,17 @@ try {
     throw new MyRuntimeException(e);
 }
 ```
-In addition to that, many Java developers prefer to work only with `RuntimeExceptions`
+In addition to that, many Java developers prefer to work with `RuntimeExceptions` only
 (there are [solid reasons](http://stackoverflow.com/questions/613954/the-case-against-checked-exceptions/614330#614330) for that).
-When doing this, you often end up catching checked exceptions from standard or third party
-components in order to convert them to into `RuntimeExceptions`.
+In such situations, you often end up catching checked exceptions from standard or third party
+components in order to convert them to into your own `RuntimeExceptions`.
 
 ET is a (very) small Java 8 library that simplifies your exception conversion code using
 Lambda expressions.
 
 With ET it looks like this:
 ```Java
-// Configure your exception mappings once in your application/module/class
+// Configure your exception mappings once, share this instance
 ExceptionTranslator et = ET.newConfiguration()
         .translate(SomeException.class).to(MyRuntimeException.class)
         .done();
@@ -58,7 +58,7 @@ To use ET you only need to add the following maven dependency to your project:
 </dependency>
 ```
 
-When using ET you typically use Java 8 Lambda expression. So make to set your compiler level
+When using ET you typically use Java 8 Lambda expression. So make sure to set your compiler level
 to Java 8 or higher. With Maven you can do this with the `maven-compiler-plugin`:
 
 ```xml
@@ -98,7 +98,7 @@ ExceptionTranslator et = ET.newConfiguration()
 ```
 
 Note that the order of the mapping configuration is important (like the order of catch statements).
-Most specific mappings should be defined first.
+More specific mappings should be defined first.
 
 For example:
 ```java
@@ -146,6 +146,17 @@ String result = et.withReturningTranslation(() -> {
 });
 
 System.out.println(result); // "foo"
+```
+Do not get confused by the `String` cast from the example above (this is required because
+`method.invoke()` returns `Object`). Thanks to Java 8 type inference you can return
+any type from `et.withReturningTranslation()`.
+
+For Example:
+```java
+Person p = et.withReturningTranslation(() -> {
+    ...
+    return new Person("john");
+});
 ```
 
 Please note that `ExceptionTranslator` is thread safe and immutable. It is safe to
@@ -220,7 +231,7 @@ in the target exception class. This list will be checked in the shown order. The
 constructor will be used to create the target exception:
 
 * `(String, Throwable)`, exception message and cause will be passed
-* `(String, Exception)`, exception massage and cause will be passed
+* `(String, Exception)`, exception message and cause will be passed
 * `(String, RuntimeException)`, exception message and cause will be passed. Is only used if the source
     exception is a sub class of `RuntimeException`
 * `(Throwable)`, exception cause will be passed
