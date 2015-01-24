@@ -111,7 +111,7 @@ ExceptionTranslator et = ET.newConfiguration()
         // an IOException which will be converted to SomeRuntimeException.
         // This mapping should be defined first
         .translate(UnknownHostException.class).to(HostNotFoundException.class)
-        .done()
+        .done();
 ```
 
 To translate exceptions using the configured mappings simply use `ExceptionTranslator.withTranslation()`
