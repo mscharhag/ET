@@ -7,7 +7,7 @@ import com.mscharhag.et.test.exceptions.FooRuntimeException;
 import static com.mscharhag.et.test.TestUtil.*;
 import org.junit.Test;
 
-public class InheritedConfigurationTests {
+public class InheritedConfigurationTest {
 
     private ExceptionTranslator baseEt = ET.newConfiguration()
             .translate(FooException.class).to(FooRuntimeException.class)

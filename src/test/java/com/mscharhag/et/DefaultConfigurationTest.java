@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-public class DefaultConfigurationTests {
+public class DefaultConfigurationTest {
 
     private ExceptionTranslator et = ET.newConfiguration().done();
     private Exception checkedException = new IOException("checked exception", null);

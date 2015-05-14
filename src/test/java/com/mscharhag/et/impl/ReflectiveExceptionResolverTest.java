@@ -5,7 +5,7 @@ import com.mscharhag.et.test.TestUtil;
 import com.mscharhag.et.test.exceptions.FooException;
 import org.junit.Test;
 
-public class ReflectiveExceptionResolverTests {
+public class ReflectiveExceptionResolverTest {
 
     ReflectiveExceptionResolver resolver;
 

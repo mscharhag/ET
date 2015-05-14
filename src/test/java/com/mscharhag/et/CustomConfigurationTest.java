@@ -8,7 +8,7 @@ import static com.mscharhag.et.test.TestUtil.*;
 import static com.mscharhag.et.test.TestUtil.FOO_CHILD_EXCEPTION;
 import static com.mscharhag.oleaster.matcher.Matchers.*;
 
-public class CustomConfigurationTests {
+public class CustomConfigurationTest {
 
     @Test
     public void customExceptionMappingIsUsed() {

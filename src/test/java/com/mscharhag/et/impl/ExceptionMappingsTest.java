@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 import com.mscharhag.et.test.exceptions.FooRuntimeException;
 import org.junit.Test;
 
-public class ExceptionMappingsTests {
+public class ExceptionMappingsTest {
 
     ExceptionMappings exceptionMappings = new ExceptionMappings(null);
 

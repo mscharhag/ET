@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLConnection;
 
-public class DocumentationExamples {
+public class DocumentationExamplesTest {
 
     @Test
     public void motivation() {
@@ -59,7 +59,6 @@ public class DocumentationExamples {
             // call String.toLowerCase() using reflection
             Method method = String.class.getMethod("toLowerCase");
             String result = (String) method.invoke("FOO");
-            System.out.println(result);
         });
 
     }
@@ -74,7 +73,6 @@ public class DocumentationExamples {
             Method method = String.class.getMethod("toLowerCase");
             return (String) method.invoke("FOO");
         });
-        System.out.println(result);
 
         assertEquals("foo", result);
     }

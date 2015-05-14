@@ -1,12 +1,13 @@
 package com.mscharhag.et;
 
-import com.mscharhag.et.impl.ExceptionMappingsTests;
-import com.mscharhag.et.impl.ReflectiveExceptionResolverTests;
+import com.mscharhag.et.doc.DocumentationExamplesTest;
+import com.mscharhag.et.impl.ExceptionMappingsTest;
+import com.mscharhag.et.impl.ReflectiveExceptionResolverTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ DefaultConfigurationTests.class, CustomConfigurationTests.class,
-        InheritedConfigurationTests.class, ReflectiveExceptionResolverTests.class, ExceptionMappingsTests.class })
+@Suite.SuiteClasses({ DefaultConfigurationTest.class, CustomConfigurationTest.class, DocumentationExamplesTest.class,
+        InheritedConfigurationTest.class, ReflectiveExceptionResolverTest.class, ExceptionMappingsTest.class })
 public class RunAllTestsSuite {
 }
