@@ -2,8 +2,9 @@ package com.mscharhag.et.impl;
 
 import com.mscharhag.et.*;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DefaultExceptionTranslatorConfigurer extends ExceptionTranslatorConfigurer {
 
@@ -21,17 +22,17 @@ public class DefaultExceptionTranslatorConfigurer extends ExceptionTranslatorCon
     }
 
     protected ExceptionMappings createDefaultExceptionMappings() {
-        List<ExceptionMapping> list = new ArrayList<>();
+        Map<Class<? extends Exception>, TargetExceptionResolver> mappings = new HashMap<>();
 
         // add mapping to translate checked exception to runtime exceptions
-        list.add(new ExceptionMapping(Exception.class, (ex) -> {
+        mappings.put(Exception.class, (ex) -> {
             if (ex instanceof RuntimeException) {
                 return (RuntimeException) ex;
             }
             return new RuntimeException(ex.getMessage(), ex);
-        }));
+        });
 
-        ExceptionMappings parent = new ExceptionMappings(list);
+        ExceptionMappings parent = new ExceptionMappings(mappings);
         return new ExceptionMappings(parent);
     }
 

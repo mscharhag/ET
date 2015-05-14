@@ -6,6 +6,6 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ DefaultConfigurationTests.class, CustomConfigurationTests.class,
-        InheritedConfigurationTests.class, ReflectiveExceptionResolverTests.class })
+        InheritedConfigurationTests.class, ReflectiveExceptionResolverTests.class, ExceptionMappingOrderingTests.class })
 public class RunAllTestsSuite {
 }

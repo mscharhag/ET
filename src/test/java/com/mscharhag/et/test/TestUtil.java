@@ -12,10 +12,11 @@ import static com.mscharhag.oleaster.matcher.Matchers.*;
 public class TestUtil {
 
     public static final String FOO_EXCEPTION_MESSAGE = "fooException";
+    public static final String FOO_CHILD_EXCEPTION_MESSAGE = "fooChildException";
     public static final String BAR_EXCEPTION_MESSAGE = "barException";
 
     public static final Exception FOO_EXCEPTION = new FooException(FOO_EXCEPTION_MESSAGE, null);
-    public static final Exception FOO_CHILD_EXCEPTION = new FooChildException("fooChildException", null);
+    public static final Exception FOO_CHILD_EXCEPTION = new FooChildException(FOO_CHILD_EXCEPTION_MESSAGE, null);
     public static final RuntimeException FOO_RUNTIME_EXCEPTION = new FooRuntimeException("fooRuntimeException", null);
     public static final Exception BAR_EXCEPTION = new BarException(BAR_EXCEPTION_MESSAGE, null);
 

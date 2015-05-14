@@ -2,6 +2,7 @@ package com.mscharhag.et;
 
 import com.mscharhag.et.test.exceptions.*;
 import com.mscharhag.et.test.TestUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.mscharhag.oleaster.matcher.Matchers.*;
@@ -36,17 +37,6 @@ public class CustomConfigurationTests {
 
         RuntimeException result = TestUtil.translateException(et, TestUtil.BAR_EXCEPTION);
         TestUtil.expectException(result, RuntimeException.class, "barException", TestUtil.BAR_EXCEPTION);
-    }
-
-    @Test
-    public void firstMappingWillBeUsed() {
-        ExceptionTranslator et = ET.newConfiguration()
-                .translate(FooException.class).to(FooRuntimeException.class)
-                .translate(FooException.class).to(BarRuntimeException.class)
-                .done();
-
-        RuntimeException result = TestUtil.translateException(et, TestUtil.FOO_EXCEPTION);
-        TestUtil.expectException(result, FooRuntimeException.class, "fooException", TestUtil.FOO_EXCEPTION);
     }
 
     @Test
