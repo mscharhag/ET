@@ -97,23 +97,6 @@ ExceptionTranslator et = ET.newConfiguration()
         .done();
 ```
 
-Note that the order of the mapping configuration is important (like the order of catch statements).
-More specific mappings should be defined first.
-
-For example:
-```java
-ExceptionTranslator et = ET.newConfiguration()
-
-        // convert all IOExceptions to SomeRuntimeExceptions
-        .translate(IOException.class).to(SomeRuntimeException.class)
-
-        // The following mapping will have no effect! UnknownHostException is
-        // an IOException which will be converted to SomeRuntimeException.
-        // This mapping should be defined first
-        .translate(UnknownHostException.class).to(HostNotFoundException.class)
-        .done();
-```
-
 To translate exceptions using the configured mappings simply use `ExceptionTranslator.withTranslation()`
 and pass a Java 8 Lambda expression.
 
