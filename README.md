@@ -1,5 +1,8 @@
 ET
 ==
+
+![ET Travis-CI Status](https://travis-ci.org/mscharhag/ET.svg?branch=master)
+
 ET is a small Java 8+ library for exception conversion/translation.
 
 ### Motivation
