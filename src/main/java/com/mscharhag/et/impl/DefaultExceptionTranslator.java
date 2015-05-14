@@ -35,12 +35,12 @@ class DefaultExceptionTranslator implements ExceptionTranslator {
     }
 
     protected RuntimeException getTargetException(Exception source) {
-        TargetExceptionResolver resolver = this.exceptionMappings.getExceptionResolver(source);
+        TargetExceptionResolver resolver = this.exceptionMappings.getExceptionResolver(source.getClass());
         RuntimeException targetException = resolver.getTargetException(source);
         if (targetException == null) {
             throw new TranslationException("TargetExceptionResolver returned null as target exception, " +
                     "targetExceptionResolver: " + resolver.getClass().getCanonicalName());
         }
-        return this.exceptionMappings.getExceptionResolver(source).getTargetException(source);
+        return targetException;
     }
 }

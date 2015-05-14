@@ -3,60 +3,69 @@ package com.mscharhag.et.impl;
 import com.mscharhag.et.TargetExceptionResolver;
 import com.mscharhag.et.TranslationException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 class ExceptionMappings {
 
-    protected ExceptionMappings parentMappings;
+    protected ExceptionMappings parentExceptionMappings;
+    protected Map<Class<? extends Exception>, TargetExceptionResolver> exceptionMappings = new HashMap<>();
 
-    // TODO: rename mappings -> exceptionMappings??
-    protected Map<Class<? extends Exception>, TargetExceptionResolver> mappings = new HashMap<>();
 
-    ExceptionMappings(ExceptionMappings parentMappings) {
-        this(parentMappings, null);
+    private ExceptionMappings() {
+        // private constructor for internal default parent mapping creation
     }
 
-    ExceptionMappings(Map<Class<? extends Exception>, TargetExceptionResolver> mappings) {
-        this(null, mappings);
-    }
 
-    ExceptionMappings(ExceptionMappings parentMappings, Map<Class<? extends Exception>, TargetExceptionResolver> mappings) {
-        this.parentMappings = parentMappings;
-        if (mappings != null) {
-            this.mappings.putAll(mappings);
+    ExceptionMappings(ExceptionMappings parentExceptionMappings) {
+        this.parentExceptionMappings = parentExceptionMappings;
+        if (this.parentExceptionMappings == null) {
+            this.parentExceptionMappings = this.createDefaultParentExceptionMappings();
         }
     }
 
-    TargetExceptionResolver getExceptionResolver(Exception e) {
-        Class exceptionClass = e.getClass();
+
+    protected ExceptionMappings createDefaultParentExceptionMappings() {
+        ExceptionMappings parentMappings = new ExceptionMappings();
+
+        // add mapping to translate checked exception to runtime exceptions
+        parentMappings.addExceptionMapping(Exception.class, (ex) -> {
+            if (ex instanceof RuntimeException) {
+                return (RuntimeException) ex;
+            }
+            return new RuntimeException(ex.getMessage(), ex);
+        });
+
+        return parentMappings;
+    }
+
+
+    void addExceptionMapping(Class<? extends Exception> sourceClass, TargetExceptionResolver targetExceptionResolver) {
+        Arguments.ensureNotNull(sourceClass, "source class cannot be null");
+        Arguments.ensureNotNull(targetExceptionResolver, "targetExceptionResolver cannot be null");
+
+        if (this.exceptionMappings.containsKey(sourceClass)) {
+            throw new TranslationException("Duplicate exception mapping for source class " + sourceClass.getCanonicalName());
+        }
+        this.exceptionMappings.put(sourceClass, targetExceptionResolver);
+    }
+
+
+    TargetExceptionResolver getExceptionResolver(Class<? extends Exception> sourceExceptionClass) {
+        Class exceptionClass = sourceExceptionClass;
 
         while (!exceptionClass.equals(Throwable.class)) {
-            TargetExceptionResolver resolver = mappings.get(exceptionClass);
+            TargetExceptionResolver resolver = this.exceptionMappings.get(exceptionClass);
             if (resolver != null) {
                 return resolver;
             }
             exceptionClass = exceptionClass.getSuperclass();
         }
 
-        if (parentMappings != null) {
-            return parentMappings.getExceptionResolver(e);
+        if (this.parentExceptionMappings != null) {
+            return this.parentExceptionMappings.getExceptionResolver(sourceExceptionClass);
         }
 
-        throw new TranslationException("No resolver for exception found, exception: " + e.getClass().getCanonicalName());
-    }
-
-    ExceptionMappings withMappings( Map<Class<? extends Exception>, TargetExceptionResolver> mappings) {
-        Map<Class<? extends Exception>, TargetExceptionResolver> totalMappings = new HashMap<>(this.mappings);
-        for (Map.Entry<Class<? extends Exception>, TargetExceptionResolver> entry : mappings.entrySet()) {
-            if (totalMappings.containsKey(entry.getKey())) {
-                throw new TranslationException("duplicate source exception " + entry.getKey().getCanonicalName());
-            }
-            totalMappings.put(entry.getKey(), entry.getValue());
-        }
-
-        return new ExceptionMappings(this.parentMappings, totalMappings);
+        throw new TranslationException("No resolver for exception found, exception: " + sourceExceptionClass.getCanonicalName());
     }
 }

@@ -2,9 +2,10 @@ package com.mscharhag.et;
 
 import com.mscharhag.et.test.exceptions.*;
 import com.mscharhag.et.test.TestUtil;
-import org.junit.Ignore;
 import org.junit.Test;
 
+import static com.mscharhag.et.test.TestUtil.*;
+import static com.mscharhag.et.test.TestUtil.FOO_CHILD_EXCEPTION;
 import static com.mscharhag.oleaster.matcher.Matchers.*;
 
 public class CustomConfigurationTests {
@@ -49,6 +50,17 @@ public class CustomConfigurationTests {
         TestUtil.expectException(result, FooRuntimeException.class, "fooChildException", TestUtil.FOO_CHILD_EXCEPTION);
     }
 
+    @Test
+    public void mostSpecificMappingIsUsed() {
+        ExceptionTranslator et = ET.newConfiguration()
+                .translate(Exception.class).to(BarRuntimeException.class)
+                .translate(FooChildException.class).to(FooChildRuntimeException.class)
+                .translate(FooException.class).to(FooRuntimeException.class)
+                .done();
+
+        RuntimeException result = translateException(et, FOO_CHILD_EXCEPTION);
+        expectException(result, FooChildRuntimeException.class, FOO_CHILD_EXCEPTION_MESSAGE, FOO_CHILD_EXCEPTION);
+    }
 
     @Test
     public void lambdaMapping() {
@@ -83,7 +95,5 @@ public class CustomConfigurationTests {
         TestUtil.expectException(first, FooRuntimeException.class, "fooException", TestUtil.FOO_EXCEPTION);
         TestUtil.expectException(second, FooRuntimeException.class, "barException", TestUtil.BAR_EXCEPTION);
     }
-
-
 
 }

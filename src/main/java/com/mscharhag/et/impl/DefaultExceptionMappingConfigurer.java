@@ -3,9 +3,7 @@ package com.mscharhag.et.impl;
 import com.mscharhag.et.ExceptionMappingConfigurer;
 import com.mscharhag.et.TargetExceptionResolver;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DefaultExceptionMappingConfigurer implements ExceptionMappingConfigurer {
 
@@ -26,10 +24,9 @@ public class DefaultExceptionMappingConfigurer implements ExceptionMappingConfig
     }
 
     private DefaultExceptionTranslatorConfigurer to(TargetExceptionResolver targetExceptionResolver) {
-        Map<Class<? extends Exception>, TargetExceptionResolver> mappings = new HashMap<>();
         for (Class<? extends Exception> sourceExceptionClass : this.sourceExceptionClasses) {
-            mappings.put(sourceExceptionClass, targetExceptionResolver);
+            this.exceptionMappings.addExceptionMapping(sourceExceptionClass, targetExceptionResolver);
         }
-        return new DefaultExceptionTranslatorConfigurer(this.exceptionMappings.withMappings(mappings));
+        return new DefaultExceptionTranslatorConfigurer(this.exceptionMappings);
     }
 }

@@ -17,24 +17,11 @@ public class DefaultExceptionTranslatorConfigurer extends ExceptionTranslatorCon
     DefaultExceptionTranslatorConfigurer(ExceptionMappings mappings) {
         this.mappings = mappings;
         if (mappings == null) {
-            this.mappings = this.createDefaultExceptionMappings();
+            this.mappings = new ExceptionMappings(null);
         }
     }
 
-    protected ExceptionMappings createDefaultExceptionMappings() {
-        Map<Class<? extends Exception>, TargetExceptionResolver> mappings = new HashMap<>();
 
-        // add mapping to translate checked exception to runtime exceptions
-        mappings.put(Exception.class, (ex) -> {
-            if (ex instanceof RuntimeException) {
-                return (RuntimeException) ex;
-            }
-            return new RuntimeException(ex.getMessage(), ex);
-        });
-
-        ExceptionMappings parent = new ExceptionMappings(mappings);
-        return new ExceptionMappings(parent);
-    }
 
     @Override
     protected ExceptionMappingConfigurer translate(List<Class<? extends Exception>> sources) {
