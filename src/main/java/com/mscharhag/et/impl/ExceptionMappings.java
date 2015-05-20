@@ -29,7 +29,7 @@ class ExceptionMappings {
         ExceptionMappings parentMappings = new ExceptionMappings();
 
         // add mapping to translate checked exception to runtime exceptions
-        parentMappings.addExceptionMapping(Exception.class, (ex) -> {
+        parentMappings.addExceptionMapping(Exception.class, (m, ex) -> {
             if (ex instanceof RuntimeException) {
                 return (RuntimeException) ex;
             }

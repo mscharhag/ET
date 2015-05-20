@@ -9,6 +9,10 @@ public interface TargetExceptionResolver {
      * @param source
      * @return a {@code RuntimeException}, never {@code null}
      */
-    RuntimeException getTargetException(Exception source);
+    RuntimeException getTargetException(String message, Exception source);
+
+    default RuntimeException getTargetException(Exception source) {
+        return this.getTargetException(source.getMessage(), source);
+    }
 
 }

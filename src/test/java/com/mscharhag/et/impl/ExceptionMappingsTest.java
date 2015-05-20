@@ -45,6 +45,6 @@ public class ExceptionMappingsTest {
 
     private RuntimeException getTargetException(ExceptionMappings mappings, Exception source) {
         TargetExceptionResolver exceptionResolver = mappings.getExceptionResolver(source.getClass());
-        return exceptionResolver.getTargetException(source);
+        return exceptionResolver.getTargetException(source.getMessage(), source);
     }
 }

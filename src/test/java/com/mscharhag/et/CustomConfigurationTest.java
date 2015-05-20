@@ -65,7 +65,7 @@ public class CustomConfigurationTest {
     @Test
     public void lambdaMapping() {
         ExceptionTranslator et = ET.newConfiguration()
-                .translate(FooException.class).using((ex) -> TestUtil.FOO_RUNTIME_EXCEPTION)
+                .translate(FooException.class).using((m, ex) -> TestUtil.FOO_RUNTIME_EXCEPTION)
                 .done();
 
         RuntimeException result = TestUtil.translateException(et, TestUtil.FOO_EXCEPTION);
@@ -75,7 +75,7 @@ public class CustomConfigurationTest {
     @Test(expected = TranslationException.class)
     public void lambdaMappingReturnsNull() {
         ExceptionTranslator et = ET.newConfiguration()
-                .translate(FooException.class).using((ex) -> null)
+                .translate(FooException.class).using((m, ex) -> null)
                 .done();
 
         et.withTranslation(() -> {
@@ -94,6 +94,18 @@ public class CustomConfigurationTest {
 
         TestUtil.expectException(first, FooRuntimeException.class, "fooException", TestUtil.FOO_EXCEPTION);
         TestUtil.expectException(second, FooRuntimeException.class, "barException", TestUtil.BAR_EXCEPTION);
+    }
+
+
+    @Test
+    public void methodReference() {
+        ExceptionTranslator et = ET.newConfiguration()
+                .translate(FooException.class).using(FooRuntimeException::new)
+                .done();
+
+        RuntimeException result = TestUtil.translateException(et, TestUtil.FOO_EXCEPTION);
+        expect(result.getMessage()).toEqual(TestUtil.FOO_EXCEPTION.getMessage());
+        expect(result.getCause()).toEqual(TestUtil.FOO_EXCEPTION);
     }
 
 }

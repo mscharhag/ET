@@ -20,7 +20,7 @@ class ReflectiveExceptionResolver implements TargetExceptionResolver {
     }
 
     @Override
-    public RuntimeException getTargetException(Exception sourceException) {
+    public RuntimeException getTargetException(String message, Exception sourceException) {
         List<ConstructorArgumentMapping> mappings = this.getConstructorMappings(sourceException);
 
         for (ConstructorArgumentMapping mapping : mappings) {
