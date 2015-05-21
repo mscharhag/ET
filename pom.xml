@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mscharhag</groupId>
     <artifactId>et</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.0</version>
     <name>ET</name>
     <url>https://github.com/mscharhag/ET</url>
 
@@ -64,6 +64,10 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                        <configuration>
+                            <!-- set for release build from command line using -Dgpg.key=.. -->
+                            <keyname>${gpg.key}</keyname>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
