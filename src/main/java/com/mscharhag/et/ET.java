@@ -11,7 +11,7 @@ import com.mscharhag.et.impl.DefaultExceptionTranslatorConfigurer;
  *                                  // Exception translator configuration
  *                                  .translate(FooException.class).to(MyRuntimeException.class)
  *                                  .translate(BazException.class).using(OtherException::new)
- *                                  .translate(BarException.class).using((message, exception) -> { .. })
+ *                                  .translate(BarException.class).using((message, exception) -&gt; { .. })
  *                                  .done(); // Create ExceptionTranslator from configuration
  * </pre>
  */
