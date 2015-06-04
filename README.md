@@ -134,8 +134,8 @@ String result = et.withReturningTranslation(() -> {
 System.out.println(result); // "foo"
 ```
 Do not get confused by the `String` cast from the example above (this is required because
-`method.invoke()` returns `Object`). Thanks to Java 8 type inference you can return
-any type from `et.withReturningTranslation()`.
+`method.invoke()` returns `Object`). Thanks to the improved type inference in Java 8 you can return
+any type from `et.withReturningTranslation()` without needing a type cast.
 
 For Example:
 ```java
